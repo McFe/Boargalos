@@ -2,6 +2,7 @@
 /tts-cache
 /data
 /logs
+/__pycache__
 *.json
 .env
 AGENTS.md
