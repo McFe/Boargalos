@@ -3,9 +3,14 @@
 /data
 /logs
 /__pycache__
+*.pyc
 *.json
+*.zip
+*.xml
+*.bak
+*.bat
+tempCodeRunnerFile.js
 .env
 AGENTS.md
+new years.md
 todo
-*.xml
-*.zip
