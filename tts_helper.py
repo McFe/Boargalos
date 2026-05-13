@@ -25,7 +25,7 @@ CACHE_STRIP_PREFIX = re.compile(r"^[^:]{1,40}\s+(says|sent|forwarded|replied to)
 SAYS_PREFIX_REGEX = re.compile(r"^(.{1,80}?\s+says)\s+(.*)$", re.IGNORECASE)
 URL_REGEX = re.compile(r"https?://\S+", re.IGNORECASE)
 TENOR_REGEX = re.compile(r"https?://tenor\.com/\S+", re.IGNORECASE)
-FFMPEG_AUDIO_ARGS = ["-ac", "1", "-ar", "24000", "-codec:a", "pcm_s16le"]
+FFMPEG_AUDIO_ARGS = ["-ac", "1", "-ar", "46000", "-codec:a", "pcm_s16le"]
 
 _WORD_REPLACEMENTS = {
   "by the way": ["btw"],
@@ -144,7 +144,7 @@ _WORD_REPLACEMENTS = {
   "voice training": ["vt"],
   "cute sad": [":c"],
   "for some reason": ["fsr"],
-  "eeu": ["ew"],
+  "eu": ["ew"],
   "g geez": ["ggs"],
   "welcome back": ["wb"],
   "ziggy": ["notzigbay"],
@@ -181,7 +181,30 @@ _WORD_REPLACEMENTS = {
   "i'll": ["ill"],
   "won't": ["wont"],
   "haven't": ["havent"],
+  "could've": ["couldve"],
+  "would've": ["wouldve"],
+  "should've": ["shouldve"],
+  "shouldn't": ["shouldnt"],
   "duggy": ["superduggy117"],
+  "of all time": ["oat"],
+  "HP": ["hp"],
+  "hot potato books": ["hpbs"],
+  "enderman": ["eman", "emen"],
+  "co opp": ["coop"],
+  "recks": ["reqs"],
+  "whatever": ["wtv"],
+  "face tanking": ["facetanking"],
+  "tisephony": ["tisiphone"],
+  "rage quit": ["ragequit"],
+  "glaysite": ["glacite"],
+  "of them": ["of em"],
+  "bouta": ["boutta"],
+  " ": ["transit"],
+  "theme-ing": ["themeing", "theming"],
+  "low-key": ["lwk"],
+  "you": ["oyu", "u"],
+  "thank you so much": ["tysm"],
+  "keyway": ["kiweh", "kiwehbird"],
 }
 
 _WORD_PATTERNS = [
