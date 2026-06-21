@@ -1,0 +1,249 @@
+{
+  "mcfe": {
+    "trigger": "?mcfe",
+    "action": "send",
+    "responseKey": "mcfePing",
+    "matchAnywhere": true,
+    "access": "any",
+    "description": "Ping mcfe (great idea jay)"
+  },
+  "emerald": {
+    "trigger": "?emerald",
+    "action": "emerald",
+    "allowedChannel": "1433924050278682745",
+    "response": "<@1084265104767455242> that bitсh",
+    "access": "couple",
+    "description": "emerald that bitch"
+  },
+  "double": {
+    "trigger": "?double",
+    "action": "reply",
+    "response": "<:MindBlownBoar:1124479306853261362>",
+    "description": "mindblown boar"
+  },
+  "jay": {
+    "trigger": "?jay",
+    "action": "jay",
+    "description": "send a random jay line"
+  },
+  "help": {
+    "trigger": "?help",
+    "action": "help",
+    "description": "help menu"
+  },
+  "edit": {
+    "trigger": "?edit",
+    "action": "editMessage",
+    "args": ["<messageId> <new text>"],
+    "access": "owner",
+    "description": "Edit a message by id"
+  },
+  "delete": {
+    "trigger": "?delete",
+    "action": "deleteMessage",
+    "access": "owner",
+    "description": "Delete a message by id"
+  },
+  "purge": {
+    "trigger": "?purgeself",
+    "action": "purge",
+    "access": "couple",
+    "args": ["[channelId] [count|all]"],
+    "description": "Delete recent bot messages from a channel"
+  },
+  "mentions": {
+    "trigger": "?mentions",
+    "action": "mentionBlock",
+    "description": "Show the current mentions"
+  },
+  "remind": {
+    "trigger": "?remind",
+    "action": "remind",
+    "args": ["user", "message"],
+    "description": "Create a reminder for a user (can be yourself)"
+  },
+  "remindme": {
+    "trigger": "?remindme",
+    "action": "remindme",
+    "args": ["on|off"],
+    "description": "Toggle whether you can receive reminders"
+  },
+  "remindremove": {
+    "trigger": "?remindremove",
+    "action": "remindRemove",
+    "access": "owner",
+    "args": ["user"],
+    "description": "remove a user from reminders (mcfe only)"
+  },
+  "time": {
+    "trigger": "?time",
+    "action": "time",
+    "args": ["add|edit|remove|user"],
+    "description": "Set or view timezone preferences"
+  },
+  "stats": {
+    "trigger": "?stats",
+    "action": "stats",
+    "description": "Show bot statistics"
+  },
+  "join": {
+    "trigger": "?join",
+    "action": "join",
+    "description": "join the powerup ping"
+  },
+  "leave": {
+    "trigger": "?leave",
+    "action": "leave",
+    "description": "leave the powerup ping"
+  },
+  "cam": {
+    "trigger": "?cam",
+    "action": "toggleSelfRole",
+    "description": "toggle the cam role"
+  },
+  "mic": {
+    "trigger": "?mic",
+    "action": "toggleSelfRole",
+    "description": "toggle the mic role"
+  },
+  "frickyou": {
+    "trigger": "?frickyou",
+    "action": "reply",
+    "responseKey": "frickyou",
+    "description": "frickyou"
+  },
+  "メクッフィー": {
+    "trigger": "?メクッフィー",
+    "action": "reply",
+    "responseKey": "mcfePing",
+    "description": "youre welcome jay"
+  },
+  "add": {
+    "trigger": "?add",
+    "action": "add",
+    "access": "whitelist",
+    "args": ["<mentions|whitelist|reminders> <user>"],
+    "description": "Add a user to mentions, whitelist, or reminders"
+  },
+  "remove": {
+    "trigger": "?remove",
+    "action": "mentionRemove",
+    "access": "whitelist",
+    "args": ["user"],
+    "description": "remove a user from the ping"
+  },
+  "powerup": {
+    "trigger": "?powerup",
+    "action": "powerup",
+    "access": "whitelist",
+    "description": "ping for powerup"
+  },
+  "message": {
+    "trigger": "?message",
+    "action": "messageControl",
+    "access": "whitelist",
+    "args": ["edit|remove|display [message]"],
+    "description": "view or change the saved message"
+  },
+  "whitelist": {
+    "trigger": "?whitelist",
+    "action": "whitelist",
+    "access": "owner",
+    "args": ["add|remove|display user"],
+    "description": "bot whitelist"
+  },
+  "restart": {
+    "trigger": "?restart",
+    "action": "restart",
+    "access": "owner",
+    "description": "restart the bot"
+  },
+  "block": {
+    "trigger": "?block",
+    "action": "siteBlock",
+    "access": "couple",
+    "args": ["<url|twitter>"],
+    "description": "block a url or the twitter domains"
+  },
+  "unblock": {
+    "trigger": "?unblock",
+    "action": "siteUnblock",
+    "access": "owner",
+    "args": ["<url|twitter>"],
+    "description": "unblock a url or the twitter domains"
+  },
+  "timeout": {
+    "trigger": "?timeout",
+    "action": "timeout",
+    "access": "owner",
+    "args": ["userId", "[seconds]"],
+    "description": "Give a user the timeout role (optional duration in seconds)"
+  },
+  "replyMessage": {
+    "trigger": "?reply",
+    "action": "replyToMessage",
+    "args": ["messageId", "message"],
+    "description": "Reply to a message by id"
+  },
+  "stoptts": {
+    "trigger": "?stoptts",
+    "action": "stopTts",
+    "description": "cancel tts"
+  },
+  "pausetts": {
+    "trigger": "?pausetts",
+    "action": "pauseTts",
+    "description": "Pause tts"
+  },
+  "resumetts": {
+    "trigger": "?resumetts",
+    "action": "resumeTts",
+    "description": "Resume tts"
+  },
+  "joinvoice": {
+    "trigger": "?joinvc",
+    "action": "joinVoice",
+    "description": "Join vc"
+  },
+  "leavevoice": {
+    "trigger": "?leavevc",
+    "action": "leaveVoice",
+    "description": "Leave vc"
+  },
+  "status": {
+    "trigger": "?status",
+    "action": "status",
+    "args": ["message"],
+    "description": "Set the current vc status"
+  },
+  "convert": {
+    "trigger": "?convert",
+    "action": "convert",
+    "args": ["<amount> <from> <to>"],
+    "description": "Convert units"
+  },
+  "clearttscache": {
+    "trigger": "?cache",
+    "action": "clearTtsCache",
+    "access": "owner",
+    "description": "clear cached TTS clips."
+  },
+  "tts": {
+    "trigger": "?tts",
+    "action": "tts",
+    "args": ["text"],
+    "description": "turn tts on or off"
+  },
+  "startadventure": {
+    "trigger": "?adventure",
+    "action": "startAdventure",
+    "access": "owner",
+    "description": ":)"
+  },
+  "timer": {
+    "trigger": "?timer",
+    "action": "timer",
+    "args": ["stop|view [seconds]"],
+    "description": "Start, stop, or view a timer"
+  }
+}
