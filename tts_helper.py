@@ -50,7 +50,7 @@ _WORD_REPLACEMENTS = {
   "different": ["diff", "dif"],
   "about": ["abt"],
   "because": ["cuz", "bc"],
-  "thank you": ["thx", "ty"],
+  "thank you": ["thx", "ty", "tyty"],
   "see you": ["cya"],
   "real quick": ["rq"],
   "already": ["alr"],
@@ -60,7 +60,7 @@ _WORD_REPLACEMENTS = {
   "tomorrow": ["tmrw"],
   "please": ["pls"],
   "u w f": ["uwf"],
-  "hypixel skyblock": ["hsb", "sb"],
+  "skyblock": ["hsb", "sb"],
   "what the fuck": ["wtf"],
   "you know": ["yk"],
   "cant be asked": ["cba"],
@@ -161,7 +161,7 @@ _WORD_REPLACEMENTS = {
   "i dont remember": ["idr"],
   "time save": ["timesave"],
   "weslay": ["weslay."],
-  "masterful": ["mastrful."],
+  "masterful": ["mastrful.", "mastrful"],
   "shut your bitch ass up": ["sybau"],
   "dee ems": ["dms"],
   "boar vc": ["boarvc"],
@@ -205,6 +205,12 @@ _WORD_REPLACEMENTS = {
   "you": ["oyu", "u"],
   "thank you so much": ["tysm"],
   "keyway": ["kiweh", "kiwehbird"],
+  "super crazy rythm castle": ["scrc"],
+  "yeah": ["ye", "ya", "yea"],
+  "lahtsiji": ["laziji"],
+  "level": ["lvl"],
+  "face tanked": ["facetanked"],
+  "j drag": ["jdrag"],
 }
 
 _WORD_PATTERNS = [
@@ -251,11 +257,11 @@ _SIMPLE_REPLACEMENTS_RAW = {
   r"boarnte": "boarnteh",
   r"👉 👈": "puise",
   r"\bsmp\b": "SMP",
-  r"\bcoop\b": "co-op",
   r"tetr\.io": "tetrio",
   r"1imb": "limb",
   r"😭": "sobbing face",
   r"67": "shut the fuck up",
+  r"twt": "twitter",
   r"pogoduck": "pogo duck",
 }
 

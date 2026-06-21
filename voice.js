@@ -39,7 +39,7 @@ function createVoiceManager({
   const VOICE_RECONNECT_MAX_DELAY_MS = 30000;
   const VOICE_RECONNECT_MAX_ATTEMPTS = 10;
   const VOICE_DISCONNECT_GRACE_MS = 30000;
-  const PLAYBACK_RATE = 1.1;
+  const PLAYBACK_RATE = 1.2;
 
   let legacyChannelDataHandled = false;
   let legacyTtsDefault = true;
@@ -718,6 +718,37 @@ function createVoiceManager({
       }
     };
   };
+  
+  const playAudioFile = async (message, audioPath) => {
+    if (!audioPath || !fs.existsSync(audioPath)) return false;
+    const guildId =
+      message?.guild?.id ||
+      message?.guildId ||
+      message?.channel?.guild?.id ||
+      message?.channel?.guildId ||
+      null;
+    if (!guildId) return false;
+
+    const state = getStateByGuildId(guildId) || getActiveVoiceState(message);
+    if (
+      !state ||
+      !state.connection ||
+      !state.player ||
+      state.connection?.state?.status === VoiceConnectionStatus.Destroyed ||
+      state.connection?.state?.status === VoiceConnectionStatus.Disconnected
+    ) {
+      return false;
+    }
+
+    try {
+      const entry = await createPlaybackEntry(audioPath, false);
+      playOrQueue(state, entry);
+      return true;
+    } catch (err) {
+      console.warn('failed to queue audio file for playback:', err?.message || err);
+      return false;
+    }
+  };
 
   const cleanupTempFiles = () => {
     try {
@@ -967,9 +998,9 @@ function createVoiceManager({
     } else if (hasSticker && !textBody && !isReply) {
       sanitized = shouldPrefix ? `${speaker} sent a sticker ${stickerName}` : `sent a sticker ${stickerName}`;
     } else if (hasVideo && !textBody && !isReply) {
-      sanitized = shouldPrefix ? `${speaker} sent a video ${videoName}` : `sent a video ${videoName}`;
+      sanitized = shouldPrefix ? `${speaker} sent a video` : `sent a video`;
     } else if (hasFile && !textBody && !isReply) {
-      sanitized = shouldPrefix ? `${speaker} sent a file ${fileName}` : `sent a file ${fileName}`;
+      sanitized = shouldPrefix ? `${speaker} sent a file` : `sent a file`;
     } else if ((isLinkOnly || isUrlOnlyText) && !isReply) {
       const linkLabel = isGif || hasTenorTextLink ? 'sent a gif' : 'sent a link';
       sanitized = `${speaker} ${linkLabel}`;
@@ -1063,6 +1094,7 @@ function createVoiceManager({
     resumePlayback,
     toggleTtsEnabled,
     handleAutoTts,
+    playAudioFile,
     maybeLeaveOnIdle,
     getVoiceConnection: (guildId) => getVoiceConnection(guildId)
   };

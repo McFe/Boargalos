@@ -234,5 +234,17 @@
     "action": "tts",
     "args": ["text"],
     "description": "turn tts on or off"
+  },
+  "startadventure": {
+    "trigger": "?adventure",
+    "action": "startAdventure",
+    "access": "owner",
+    "description": ":)"
+  },
+  "timer": {
+    "trigger": "?timer",
+    "action": "timer",
+    "args": ["stop|view [seconds]"],
+    "description": "Start, stop, or view a timer"
   }
 }

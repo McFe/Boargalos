@@ -6,7 +6,10 @@ const {
   Client,
   Events,
   GatewayIntentBits,
-  Partials
+  Partials,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle
 } = require('discord.js');
 const { createVoiceManager } = require('./voice');
 const {
@@ -90,6 +93,32 @@ const matchAnywhereCommands = commandIds.filter((id) => !!commandDef(id)?.matchA
 const untrackedCommands = ['add', 'remove', 'message', 'whitelist', 'restart', 'メクッフィー']
   .map((id) => triggerFor(id))
   .filter(Boolean);
+const button_adventure_start = 'button_adventure_start';
+const button_adventure_back = 'button_adventure_back';
+const button_adventure_success = 'button_adventure_success';
+const button_walk_flowers = 'button_walk_flowers';
+const button_walk_river = 'button_walk_river';
+const button_examine_river = 'button_examine_river';
+const button_walk_tree = 'button_walk_tree';
+const button_walk_forest = 'button_walk_south';
+const button_examine_forest = 'button_examine_forest';
+const button_examine_tree = 'button_examine_tree';
+const button_touch_tree = 'button_touch_tree';
+const button_try_again = 'button_try_again';
+const button_try_again2 = 'button_try_again2';
+const content_adventure_start = '**The Clearing**\nYou stumble out of the forest into soft green grass. A lush meadow stands before you, with bees lazily perched atop the roses. You hear a babbling creek somewhere to your right. Shielding your eyes from the bright sunlight, you see a towering tree with red leaves in the middle of the clearing.\n\n*You head to the...*';
+const content_adventure_back = '**The Clearing**\nYou are back at the clearing, where the towering tree with red leaves stands tall in the middle. The bees are still busy with the roses, the soft sounds of the streaming water barely reach your ears, and the sunlight continues shining bright. With the soft, green grass stretching out before you, you decide to check out the...';
+const content_adventure_success = 'You step back from the tree and head home. The sounds of the meadow fade as you return to the familiar comfort of your abode. You sit by the window, looking out over the forest and wonder when you will visit it again...';
+const content_walk_flowers = 'You walk towards the flowers, covering part of the clearing. You pick a few, smell their fragrant scents and watch the bees at work. As you look around, only the towering tree with red leaves stands out.';
+const content_walk_river = 'You follow the sounds of water to a small river. As you approach it, the grass and dirt crunching under your feet turns to pebbles and mud, and the stones make crisp sounds as they clink against each other. Cold, clear water rushes down rocks and moss, seeming to shimmer in the sunlight. A little paradise.';
+const content_examine_river = 'The river *-or more accurately, the brook-* runs in a small crevice of cool stone splattered with moss, splashing droplets onto the rocks ashore. You reach out to brush against the river\'s surface and quickly jerk back\; the crystal clear water is as cold as ice. Oblivious to your presence, the water continues rushing along, seeming to sing a whimsical tune.';
+const content_walk_tree = 'The warm sunlight and tall verdant grasses of the meadow encourage you to amble along at a leisurely stroll, smelling the roses along the way. Pollen hangs thick in the air, and the wispy grass brushes against your clothes as you move along. It takes a while for you to reach the shaded area of the meadow, where leaves fall in blooms of red. You stop in front of the trunk and can see the wide expanse that the base stretches from.';
+const content_walk_forest = 'You decide that the supernatural forces that made such a ginormous tree are not those you want to deal with, and you head back where you came from.';
+const content_examine_forest = 'Around you lies a cage of aged, twisted branches, making up a forest. Though the trees tower above you, they seem dwarfed by the tree with red leaves that you saw in the clearing. Maybe you *should* check it out after all...';
+const content_examine_tree = 'You look closer at the tree. Rough, gnarled bark climbs its way up the wide trunk. Giant roots poke out of the ground, buttressing the tree from the elements. Far above you, nearly hidden by clouds, you can see twisting branches reaching for the sky, seemingly held aloft by feather-like red leaves.';
+const content_touch_tree = 'As soon as your palm touches the knotted wood, doors seem to open in your mind and a rush of information flies into your skull.\n**Yggdrasil:** the great tree, the source of all life in the area. \nBelow your feet hang suspended stalactites overlooking a lush cave that seems to yawn like a gargantuan monster. All manner of frogs, fish, and shrews scuttle about, bringing the sounds of the biome to life. **Life.** The tree supports life. \nStars spin behind your eyes, tethered together in a web of a million tangled golden threads, each an organism, each a precious, delicate heartbeat. Images flash in your mind, most incomprehensible, unknowable. \n<@554894243492134922> — the dragon. <@850976200562311168> — the stag. <@648283315773898752> — the hawk. <@735212643865854104> — the squirrel, and <@1084265104767455242> — the doe, standing winsome in sweet grass. An endless summer, a blinding blizzard. \nAn item, glowing so bright it\'s unseeable, filled with pure crackling energy, filled with knowledge, filled--\n**Link severed.**';
+const content_try_again = 'You press your palm harder against the bark. You can feel the wood splinters digging into your hand, but nothing else happens.';
+const content_try_again2 = 'You try again, but with the same result. You decide that you should leave the tree alone for now. You wonder if it will reveal more information to you later...';
 const tail = `\n\n||use ${triggerFor('join') || '?join'} to turn on notifications\nuse ${triggerFor('leave') || '?leave'} to turn off notifications||`;
 const ttsScript = path.join(__dirname, 'tts_helper.py');
 const ttsTempDir = path.join(__dirname, 'tts-cache');
@@ -1274,6 +1303,46 @@ function enqueueReminder(targetId, entry) {
   });
 }
 
+function parseDuration(input) {
+  const raw = String(input || '').trim().toLowerCase();
+  const match = raw.match(/^(\d+)\s*(s|m|h|d|w)?$/);
+  if (!match) return null;
+  const value = Number(match[1]);
+  const unit = match[2] || 'm';
+  let duration = value;
+  switch (unit) {
+    case 's':
+      duration *= 1000;
+      break;
+    case 'm':
+      duration *= 60 * 1000;
+      break;
+    case 'h':
+      duration *= 60 * 60 * 1000;
+      break;
+    case 'd':
+      duration *= 24 * 60 * 60 * 1000;
+      break;
+    case 'w':
+      duration *= 7 * 24 * 60 * 60 * 1000;
+      break;
+  }
+  return duration;
+}
+
+const activeTimers = [];
+const formatDurationMs = (ms) => {
+  const seconds = Math.max(0, Math.round(ms / 1000));
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const hours = Math.floor(seconds / 3600);
+  const secs = seconds % 60;
+  const parts = [];
+  if (hours) parts.push(`${hours}h`);
+  if (minutes) parts.push(`${minutes}m`);
+  if (secs || !parts.length) parts.push(`${secs}s`);
+  return parts.join(' ');
+};
+
 const actionHandlers = {};
 
 const logCommandRun = (message, id, keyword, suffix) => {
@@ -1354,6 +1423,7 @@ const {
   resumePlayback,
   toggleTtsEnabled,
   handleAutoTts,
+  playAudioFile,
   getVoiceConnection
 } = voice;
 
@@ -2372,6 +2442,22 @@ actionHandlers.replyToMessage = async ({ message, rest, keyword }) => {
   }
 };
 
+actionHandlers.startAdventure = async ({ message, keyword }) => {
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(button_adventure_start)
+      .setLabel('Start ')
+      .setStyle(ButtonStyle.Success)
+      .setEmoji('▶️')
+  );
+
+  await sendMessage(message, {
+    content: '',
+    components: [row]
+  });
+  logCommandRun(message, 'startAdventure', keyword);
+};
+
 actionHandlers.tts = async ({ message, keyword }) => {
   const channelId = message.channelId || message.channel?.id || null;
   if (!channelId) {
@@ -2382,6 +2468,70 @@ actionHandlers.tts = async ({ message, keyword }) => {
   const enabled = toggleTtsEnabled(channelId);
   await sendReply(message, `TTS is now ${enabled ? 'enabled' : 'disabled'}.`);
   logCommandRun(message, 'tts', keyword);
+};
+
+actionHandlers.timer = async ({ message, keyword, rest }) => {
+  const durationText = String(rest || '').trim();
+  if (durationText.toLowerCase() === 'view') {
+    if (!activeTimers.length) {
+      await sendReply(message, 'No active timers.');
+      return;
+    }
+
+    const lines = activeTimers.map((timer) => {
+      const remaining = formatDurationMs(timer.expiresAt - Date.now());
+      return `- ${timer.durationText} by ${timer.authorName} in ${timer.channelName} (${remaining})`;
+    });
+
+    await sendReply(message, `Active timers (${activeTimers.length}):\n${lines.join('\n')}`);
+    return;
+  }
+
+  const durationMs = await parseDuration(durationText);
+  if (durationMs === null) {
+    await sendReply(message, 'usage: ?timer <duration>\nexample: 10s, 5m, 2h');
+    return;
+  }
+
+  const expiresAt = Date.now() + durationMs;
+  const timerId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const authorId = message.author?.id || message.authorId || 'unknown';
+  const authorName = message.author?.username || message.author?.name || authorId;
+  const channelName = message.channel?.name || message.channelId || 'DM';
+
+  const timerEntry = {
+    id: timerId,
+    authorId,
+    authorName,
+    channelName,
+    durationText,
+    expiresAt
+  };
+
+  timerEntry.timeout = setTimeout(async () => {
+    const index = activeTimers.findIndex((item) => item.id === timerId);
+    if (index !== -1) activeTimers.splice(index, 1);
+
+    const timerSoundPath = path.join(ttsTempDir, 'timer.wav');
+    let playedSound = false;
+    try {
+      playedSound = await playAudioFile(message, timerSoundPath);
+    } catch (err) {
+      console.warn('failed to play timer sound:', err?.message || err);
+    }
+
+    if (!playedSound) {
+      try {
+        await sendReply(message, `Timer done: ${durationText}`);
+      } catch (err) {
+        console.warn('timer callback reply failed:', err?.message || err);
+      }
+    }
+  }, durationMs);
+
+  activeTimers.push(timerEntry);
+  await sendReply(message, `Timer set for ${durationText}`);
+  logCommandRun(message, 'timer', keyword);
 };
 
 const hasCommandAccess = (def, { isOwner, isWhitelisted, authorId }) => {
@@ -2693,6 +2843,235 @@ client.on(Events.MessageCreate, async (message) => {
       err?.message || err
     );
     return;
+  }
+});
+
+client.on(Events.InteractionCreate, async (interaction) => {
+  if (!interaction.isButton()) return;
+
+  try {
+    if (interaction.customId === button_adventure_start) {
+      await interaction.reply({
+        content: content_adventure_start,
+        ephemeral: true,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_walk_flowers)
+              .setLabel('Flowers')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('➡️'),
+            new ButtonBuilder()
+              .setCustomId(button_walk_river)
+              .setLabel('River')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('⬅️'),
+            new ButtonBuilder()
+              .setCustomId(button_walk_tree)
+              .setLabel('Tree')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('⬆️'),
+            new ButtonBuilder()
+              .setCustomId(button_walk_forest)
+              .setLabel('Forest')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('⬇️')
+            )
+        ]
+      });
+      return;
+    }
+    
+    if (interaction.customId === button_walk_flowers) {
+      await interaction.update({
+        content: content_walk_flowers,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_adventure_back)
+              .setLabel('Go Back')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('⏮️')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_walk_river) {
+      await interaction.update({
+        content: content_walk_river,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_examine_river)
+              .setLabel('Go closer')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('🔎')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_examine_river) {
+      await interaction.update({
+        content: content_examine_river,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_adventure_back)
+              .setLabel('Go Back')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('⏮️')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_walk_tree) {
+      await interaction.update({
+        content: content_walk_tree,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_examine_tree)
+              .setLabel('Look closer')
+              .setStyle(ButtonStyle.Success)
+              .setEmoji('🔍')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_walk_forest) {
+      await interaction.update({
+        content: content_walk_forest,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_examine_forest)
+              .setLabel('Look around')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('🔎')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_examine_forest) {
+      await interaction.update({
+        content: content_examine_forest,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_adventure_back)
+              .setLabel('Go Back')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('⏮️')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_examine_tree) {
+      await interaction.update({
+        content: content_examine_tree,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_touch_tree)
+              .setLabel('Touch the Tree')
+              .setStyle(ButtonStyle.Success)
+              .setEmoji('✋')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_touch_tree) {
+      await interaction.update({
+        content: content_touch_tree,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_try_again)
+              .setLabel('Try again')
+              .setStyle(ButtonStyle.Secondary)
+              .setEmoji('🔃')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_try_again) {
+      await interaction.update({
+        content: content_try_again,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_try_again2)
+              .setLabel('Try again')
+              .setStyle(ButtonStyle.Danger)
+              .setEmoji('🔃')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_try_again2) {
+      await interaction.update({
+        content: content_try_again2,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_adventure_success)
+              .setLabel('Go Home')
+              .setStyle(ButtonStyle.Secondary)
+              .setEmoji('🏠')
+          )
+        ]
+      });
+    }
+
+    if (interaction.customId === button_adventure_success) {
+      await interaction.update({
+        content: content_adventure_success,
+        components: []
+      });
+      return;
+    }
+
+    if (interaction.customId === button_adventure_back) {
+      await interaction.update({
+        content: content_adventure_back,
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(button_walk_flowers)
+              .setLabel('Flowers')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('➡️'),
+            new ButtonBuilder()
+              .setCustomId(button_walk_river)
+              .setLabel('River')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('⬅️'),
+            new ButtonBuilder()
+              .setCustomId(button_walk_tree)
+              .setLabel('Tree')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('⬆️'),
+            new ButtonBuilder()
+              .setCustomId(button_walk_forest)
+              .setLabel('Forest')
+              .setStyle(ButtonStyle.Primary)
+              .setEmoji('⬇️')
+            )
+          ]
+        }
+      );
+    }
+  } catch (err) {
+    console.warn('failed to handle adventure button interaction:', err?.message || err);
   }
 });
 
