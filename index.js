@@ -1264,7 +1264,7 @@ function appendCommandLog({ message, command }) {
 
 function restartBot() {
   try {
-    const child = spawn('systemctl', ['restart', 'boargalos.service'], {
+    const child = spawn('systemctl', ['restart', '--now', 'Boargalos.service'], {
       cwd: __dirname,
       detached: true,
       stdio: 'pipe'
