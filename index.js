@@ -366,29 +366,26 @@ const normalizeSiteBlockTarget = (value) =>
     .trim()
     .replace(/^https?:\/\//i, '')
     .replace(/^\/+/, '');
-const runSpawnedProcess = (command, args, options = {}) =>
+const runSpawnedProcess = (command, args = [], options = {}) =>
   new Promise((resolve, reject) => {
-    const child = spawn(command, args, { windowsHide: true, ...options });
+    const child = spawn(command, args, { stdio: 'pipe', ...options });
+
     let stdout = '';
     let stderr = '';
+
     if (child.stdout) {
-      child.stdout.on('data', (chunk) => {
-        stdout += chunk.toString();
-      });
+      child.stdout.on('data', chunk => (stdout += chunk.toString()));
     }
     if (child.stderr) {
-      child.stderr.on('data', (chunk) => {
-        stderr += chunk.toString();
-      });
+      child.stderr.on('data', chunk => (stderr += chunk.toString()));
     }
+
     child.on('error', reject);
-    child.on('close', (code) => {
+    child.on('close', code =>
       resolve({
         code,
-        stdout: stdout.trim(),
-        stderr: stderr.trim()
-      });
-    });
+      })
+    );
   });
 const resolveSiteBlockTargets = (rawInput) => {
   const targets = String(rawInput || '')
@@ -1267,14 +1264,14 @@ function appendCommandLog({ message, command }) {
 
 function restartBot() {
   try {
-    const child = spawn('cmd', ['/c', 'start', '""', 'start.bat'], {
+    const child = spawn('systemctl', ['restart', 'boargalos.service'], {
       cwd: __dirname,
       detached: true,
-      stdio: 'ignore'
+      stdio: 'pipe'
     });
     child.unref();
   } catch (err) {
-    console.warn('failed to restart:', err?.message || err);
+    console.warn('failed to restart via systemd:', err?.message || err);
   }
   setTimeout(() => process.exit(0), 500);
 }
